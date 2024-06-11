@@ -26,16 +26,16 @@
           </div>
 
           <div class="text-right">
-            <router-link
-              :to="{
-                name: 'signin',
-              }"
-              class="text-primary text-right font-inter md:text-base text-sm"
-              >Resend OTP</router-link
+            <button
+              @click="resendActivationCode"
+              :disabled="isResendingOtp || isSubmiting || resetCountDown > 0"
+              class="text-primary bg-transparent p-0 text-right font-inter md:text-base text-sm"
             >
+              Resend OTP <span v-if="resetCountDown > 0">({{ resetCountDown }})</span>
+            </button>
           </div>
           <div>
-            <button type="submit" :disabled="otp.length < 6 || isSubmiting">
+            <button type="submit" :disabled="otp.length < 6 || isSubmiting || isResendingOtp">
               <span v-if="!isSubmiting"> Verify </span>
               <div class="loader" v-else></div>
             </button>
@@ -50,14 +50,16 @@
 import { ref } from 'vue';
 import axios from '@/service/axios';
 import { useToast } from 'vue-toast-notification';
-import { useRouter } from 'vue-router';
 
-const toast = useToast();
-const router = useRouter();
+const toast = useToast({
+  position: 'top',
+});
 
 const otp = ref('');
 const otpInput = ref(null);
 const isSubmiting = ref(false);
+const isResendingOtp = ref(false);
+const resetCountDown = ref(0);
 
 const submitForm = async () => {
   try {
@@ -80,40 +82,42 @@ const submitForm = async () => {
     }
 
     toast.success(data?.message ?? 'Account activates successfully');
-    router.push({ name: 'overview' });
+    window.location = '/dashboard';
   } catch (error) {
     toast.error(error?.response?.data?.message ?? 'An error occurred. Please try again later.');
   } finally {
     isSubmiting.value = false;
   }
 };
+
+const resendActivationCode = async () => {
+  try {
+    isResendingOtp.value = true;
+    resetCountDown.value = 60;
+
+    const interval = setInterval(() => {
+      resetCountDown.value -= 1;
+      if (resetCountDown.value === 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    const { data } = await axios.get('/auth/resend-activation-otp');
+
+    if (data?.status !== 'success') {
+      return toast.error(data?.message ?? 'An error occurred. Please try again later.');
+    }
+
+    toast.success(data?.message ?? 'Activation code sent successfully');
+  } catch (error) {
+    toast.error(error?.response?.data?.message ?? 'An error occurred. Please try again later.');
+  } finally {
+    isResendingOtp.value = false;
+  }
+};
 </script>
 
 <style lang="scss">
-// .otp-input {
-//   width: 40px;
-//   height: 40px;
-//   padding: 5px;
-//   margin: 0 10px;
-//   font-size: 20px;
-//   border-radius: 4px;
-//   border: 1px solid rgba(0, 0, 0, 0.3);
-//   text-align: center;
-// }
-// /* Background colour of an input field with value */
-// .otp-input.is-complete {
-//   background-color: #e4e4e4;
-// }
-// .otp-input::-webkit-inner-spin-button,
-// .otp-input::-webkit-outer-spin-button {
-//   -webkit-appearance: none;
-//   margin: 0;
-// }
-// input::placeholder {
-//   font-size: 15px;
-//   text-align: center;
-//   font-weight: 600;
-// }
 .otp-input-container {
   gap: 6px;
   .otp-input {

@@ -73,12 +73,10 @@ import { useToast } from 'vue-toast-notification';
 import { isEmpty } from '@/utils/helpers';
 import isEmail from 'validator/lib/isEmail';
 import axios from '@/service/axios';
-import { useRouter } from 'vue-router';
 
 const toast = useToast({
   position: 'top',
 });
-const router = useRouter();
 
 const isSubmiting = ref(false);
 
@@ -132,7 +130,7 @@ const submitForm = async () => {
     }
 
     toast.success(data?.message ?? 'Account created successfully');
-    router.push({ name: 'activate-account' });
+    window.location = '/auth/activate-account';
   } catch (error) {
     toast.error(error?.response?.data?.message ?? 'An error occurred. Please try again later.');
   } finally {

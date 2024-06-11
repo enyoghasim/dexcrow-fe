@@ -79,6 +79,13 @@ router.beforeEach((to, from, next) => {
       if (!AuthStore.user) {
         return next({ name: 'signin' });
       } else {
+        if (!AuthStore.user?.isEmailVerified) {
+          if (to.name !== 'activate-account') {
+            return next({ name: 'activate-account' });
+          }
+        } else if (to.name === 'activate-account') {
+          return next({ name: 'overview' });
+        }
         return next();
       }
     } else if (to.matched.some((e) => e?.meta.guestOnly)) {
@@ -97,10 +104,24 @@ router.beforeEach((to, from, next) => {
           if (!AuthStore.user) {
             return next({ name: 'signin' });
           } else {
+            if (!AuthStore.user?.isEmailVerified) {
+              if (to.name !== 'activate-account') {
+                return next({ name: 'activate-account' });
+              }
+            } else if (to.name === 'activate-account') {
+              return next({ name: 'overview' });
+            }
             return next();
           }
         } else if (to.matched.some((record) => record.meta.guestOnly)) {
           if (AuthStore.user) {
+            if (!AuthStore.user?.isEmailVerified) {
+              if (to.name !== 'activate-account') {
+                return next({ name: 'activate-account' });
+              }
+            } else if (to.name === 'activate-account') {
+              return next({ name: 'overview' });
+            }
             return next({ name: 'overview' });
           } else {
             return next();
