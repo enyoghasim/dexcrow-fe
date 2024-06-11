@@ -132,7 +132,7 @@ const submitForm = async () => {
     }
 
     toast.success(data?.message ?? 'Account created successfully');
-    router.push({ name: 'overview' });
+    router.push({ name: 'activate-account' });
   } catch (error) {
     toast.error(error?.response?.data?.message ?? 'An error occurred. Please try again later.');
   } finally {
