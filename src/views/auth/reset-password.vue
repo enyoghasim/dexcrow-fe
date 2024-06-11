@@ -16,7 +16,7 @@
             <label> Repeat Password </label>
             <div>
               <input
-                v-model="formData.password2"
+                v-model="formData.confirmPassword"
                 placeholder="Repeat Password"
                 required
                 type="password"
@@ -43,12 +43,57 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
+import { useToast } from 'vue-toast-notification';
+import axios from '@/service/axios';
+import isHexadecimal from 'validator/lib/isHexadecimal';
+import { isEmpty } from '@/utils/helpers';
+import { useRoute } from 'vue-router';
+
+const toast = useToast({
+  position: 'top',
+});
+
+const route = useRoute();
 
 const formData = reactive({
   password: '',
-  password2: '',
+  confirmPassword: '',
 });
+const isSubmiting = ref(false);
 
-const submitForm = () => {};
+const submitForm = async () => {
+  console.log(route);
+  try {
+    if (isEmpty(formData.password, formData.confirmPassword)) {
+      return toast.info('All fields are required');
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return toast.info('Passwords dont match');
+    }
+
+    if (formData.password.length < 6) {
+      return toast.info('Password must be a minimum of 6 characters');
+    }
+
+    const { selector, token } = route.params;
+
+    if (!isHexadecimal(selector) || !isHexadecimal(token)) {
+      return toast.info('Invalid token');
+    }
+    const { data } = await axios.post(`/auth/reset-password/${selector}/${token}`, formData);
+
+    if (data?.status !== 'success') {
+      return toast.error(data?.message ?? 'An error occurred. Please try again later.');
+    }
+
+    toast.success(data?.message ?? 'Password changed successfully you can login');
+    window.location = '/auth/signin';
+  } catch (error) {
+    toast.error(error?.response?.data?.message ?? 'An error occurred. Please try again later.');
+  } finally {
+    isSubmiting.value = false;
+  }
+};
 </script>
