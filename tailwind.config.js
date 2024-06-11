@@ -10,6 +10,11 @@ module.exports = {
         sora: ["'Sora', sans-serif"],
         poppins: ["'Poppins', sans-serif"],
         inter: ["'Inter', sans-serif"]
+      },
+      colors: {
+        lightGray: '#F3F4F6',
+        textGray: '#4B5563',
+        primary: '#4F46E5'
       }
     }
   },

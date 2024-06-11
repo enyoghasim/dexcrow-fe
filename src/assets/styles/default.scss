@@ -1,0 +1,28 @@
+input {
+  @apply p-4 text-black md:text-base text-sm w-full rounded-lg bg-lightGray outline-none font-poppins;
+}
+
+button {
+  @apply p-4 bg-primary font-poppins text-white md:text-base text-sm w-full rounded-lg disabled:cursor-not-allowed transition-all duration-300 hover:opacity-60 disabled:opacity-30;
+}
+
+label {
+  @apply font-inter font-semibold text-black md:text-sm text-xs;
+}
+
+.loader {
+  width: 24px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  margin: 0 auto;
+  background:
+    radial-gradient(farthest-side, #fff 94%, #0000) top/4px 4px no-repeat,
+    conic-gradient(#0000 30%, #fff);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 0);
+  animation: l13 0.6s infinite linear;
+}
+@keyframes l13 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
