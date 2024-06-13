@@ -20,6 +20,7 @@ const useAuthStore = defineStore('AuthStore', {
 
         if (data?.status === 'success') {
           this.user = data?.data;
+          console.log(this.user, 'eee');
         } else {
           return toast.error(data?.message ?? 'An error occurred');
         }

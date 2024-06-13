@@ -62,7 +62,7 @@
           <li>
             <router-link
               :to="{
-                name: 'overview',
+                name: 'profile',
               }"
               class="flex flex-row items-center space-x-1 p-2 rounded-md hover:bg-gray-100"
             >
@@ -73,7 +73,7 @@
           <li>
             <router-link
               :to="{
-                name: 'overview',
+                name: 'settings',
               }"
               class="flex flex-row items-center space-x-1 p-2 rounded-md hover:bg-gray-100"
             >
@@ -97,6 +97,14 @@
     </nav>
   </aside>
 </template>
+
+<style lang="scss">
+aside {
+  .router-link-active.router-link-exact-active {
+    background-color: #f3f4f6;
+  }
+}
+</style>
 
 <script setup>
 import House from '@/components/icons/house.vue';
